@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0a0a0a">
+<title>Urban Cutz — Dallas, TX</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;background:#0a0a0a;font-family:'DM Sans',sans-serif;}
+:root{
+  --bg:#0a0a0a;--s1:#111;--s2:#1a1a1a;--s3:#222;
+  --gold:#c9a84c;--gold2:#e8c96a;--white:#f5f5f0;
+  --muted:#666;--border:rgba(255,255,255,0.07);
+  --green:#00c875;--green-dim:rgba(0,200,117,0.1);
+  --red:#ff4444;--red-dim:rgba(255,68,68,0.1);
+  --amber:#f5a623;--amber-dim:rgba(245,166,35,0.1);
+  --font-display:'Bebas Neue',sans-serif;
+  --r:12px;--r2:18px;--r3:24px;
+}
+.app{max-width:430px;margin:0 auto;min-height:100vh;background:var(--bg);display:flex;flex-direction:column;}
+
+/* TOPBAR */
+.topbar{background:var(--s1);padding:env(safe-area-inset-top,12px) 16px 0;position:sticky;top:0;z-index:100;border-bottom:1px solid var(--border);}
+.tb-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0 10px;}
+.logo-wrap{display:flex;align-items:center;gap:10px;}
+.logo-box{width:36px;height:36px;background:var(--gold);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;}
+.logo-name{font-family:var(--font-display);font-size:20px;letter-spacing:1px;color:var(--white);}
+.logo-sub{font-size:10px;color:var(--muted);margin-top:-2px;font-weight:500;}
+.av{width:32px;height:32px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--bg);}
+.nav-tabs{display:flex;overflow-x:auto;scrollbar-width:none;padding-bottom:1px;}
+.nav-tabs::-webkit-scrollbar{display:none;}
+.ntab{flex:0 0 auto;padding:9px 14px 10px;text-align:center;cursor:pointer;border-bottom:2px solid transparent;color:var(--muted);font-size:11px;font-weight:600;transition:all .2s;letter-spacing:.3px;}
+.ntab.on{color:var(--gold);border-bottom-color:var(--gold);}
+
+/* PAGES */
+.pages{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 14px 90px;}
+.page{display:none;}
+.page.on{display:block;animation:fadeUp .25s ease both;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* HERO */
+.hero{background:linear-gradient(160deg,#1a1500 0%,#0a0a0a 60%);border:1px solid rgba(201,168,76,0.2);border-radius:var(--r3);padding:22px 20px;margin-bottom:12px;position:relative;overflow:hidden;}
+.hero::before{content:'✂️';position:absolute;right:-10px;top:50%;transform:translateY(-50%) rotate(-45deg);font-size:80px;opacity:.06;}
+.hero-greeting{font-size:12px;font-weight:600;color:var(--gold);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:4px;}
+.hero-name{font-family:var(--font-display);font-size:38px;letter-spacing:2px;color:var(--white);line-height:1;}
+.hero-date{font-size:12px;color:var(--muted);margin-top:4px;font-weight:500;}
+.hero-chips{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;}
+.chip{background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.2);border-radius:100px;padding:6px 13px;display:flex;align-items:center;gap:6px;}
+.chip-val{font-family:var(--font-display);font-size:16px;color:var(--gold);letter-spacing:.5px;}
+.chip-lbl{font-size:10px;color:var(--muted);font-weight:600;}
+
+/* ALERT */
+.alert{background:var(--red-dim);border:1px solid rgba(255,68,68,0.2);border-radius:var(--r);padding:11px 13px;margin-bottom:10px;display:flex;gap:9px;align-items:flex-start;}
+.alert-dot{width:7px;height:7px;border-radius:50%;background:var(--red);flex-shrink:0;margin-top:4px;}
+.alert-txt{font-size:12px;color:#ff9999;line-height:1.55;font-weight:500;}
+
+/* SECTION */
+.sec{display:flex;align-items:center;justify-content:space-between;margin:14px 0 8px;padding:0 2px;}
+.sec-title{font-family:var(--font-display);font-size:14px;letter-spacing:1px;color:var(--muted);}
+.sec-btn{background:var(--gold);color:var(--bg);border:none;border-radius:7px;padding:6px 13px;font-size:11px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:.3px;}
+.sec-btn2{background:var(--s2);color:var(--muted);border:none;border-radius:7px;padding:6px 13px;font-size:11px;font-weight:600;cursor:pointer;}
+
+/* CARDS */
+.card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r2);margin-bottom:10px;overflow:hidden;}
+.card-head{padding:13px 15px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);}
+.card-title{font-family:var(--font-display);font-size:14px;letter-spacing:.8px;color:var(--white);}
+.card-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+
+/* METRICS */
+.metrics{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px;}
+.mc{background:var(--s1);border:1px solid var(--border);border-radius:var(--r2);padding:14px;}
+.mc-lbl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px;font-weight:600;}
+.mc-val{font-family:var(--font-display);font-size:22px;letter-spacing:.5px;color:var(--white);line-height:1;}
+.mc-badge{display:inline-block;font-size:10px;padding:3px 8px;border-radius:100px;margin-top:7px;font-weight:600;}
+
+/* APPT ROWS */
+.arow{display:flex;align-items:center;gap:12px;padding:12px 15px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;}
+.arow:last-child{border-bottom:none;}
+.arow:active{background:var(--s2);}
+.aav{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--bg);flex-shrink:0;}
+.ainfo{flex:1;min-width:0;}
+.aname{font-size:13px;font-weight:700;color:var(--white);}
+.asvc{font-size:11px;color:var(--muted);margin-top:1px;}
+.atime{font-size:12px;font-weight:700;color:var(--gold);flex-shrink:0;text-align:right;}
+.astatus{font-size:9px;color:var(--muted);margin-top:2px;text-align:right;font-weight:600;}
+.pill{font-size:10px;padding:4px 10px;border-radius:100px;font-weight:700;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap;flex-shrink:0;}
+.pill-green{background:var(--green-dim);color:var(--green);}
+.pill-red{background:var(--red-dim);color:var(--red);}
+.pill-amber{background:var(--amber-dim);color:var(--amber);}
+.pill-gold{background:rgba(201,168,76,0.1);color:var(--gold);}
+.pill-gray{background:var(--s2);color:var(--muted);}
+
+/* SERVICE MENU */
+.svc-row{display:flex;align-items:center;gap:12px;padding:13px 15px;border-bottom:1px solid var(--border);}
+.svc-row:last-child{border-bottom:none;}
+.svc-ic{width:38px;height:38px;border-radius:var(--r);background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
+.svc-name{font-size:13px;font-weight:700;color:var(--white);flex:1;}
+.svc-dur{font-size:11px;color:var(--muted);margin-top:2px;}
+.svc-price{font-family:var(--font-display);font-size:18px;letter-spacing:.5px;color:var(--gold);}
+
+/* CLIENTS */
+.client-row{display:flex;align-items:center;gap:12px;padding:12px 15px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;}
+.client-row:last-child{border-bottom:none;}
+.client-row:active{background:var(--s2);}
+.client-av{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--bg);flex-shrink:0;}
+.client-name{font-size:13px;font-weight:700;color:var(--white);}
+.client-sub{font-size:11px;color:var(--muted);margin-top:1px;}
+.client-spent{font-family:var(--font-display);font-size:16px;color:var(--gold);letter-spacing:.3px;}
+.client-visits{font-size:10px;color:var(--muted);text-align:right;margin-top:2px;}
+
+/* NOSHOW BANNER */
+.noshow{background:linear-gradient(135deg,#1a1500,#0f0f00);border:1px solid rgba(201,168,76,0.25);border-radius:var(--r2);padding:16px;margin-bottom:10px;display:flex;gap:12px;align-items:center;}
+.noshow-ic{font-size:30px;flex-shrink:0;}
+.noshow-title{font-family:var(--font-display);font-size:15px;letter-spacing:.5px;color:var(--gold);}
+.noshow-sub{font-size:12px;color:var(--muted);margin-top:3px;font-weight:500;line-height:1.5;}
+
+/* FORMS */
+.form-body{padding:15px;}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:9px;}
+.frow.full{grid-template-columns:1fr;}
+.flbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px;font-weight:700;}
+.fin{width:100%;padding:11px 13px;border:1px solid var(--border);border-radius:var(--r);font-size:14px;color:var(--white);background:var(--s2);outline:none;font-family:'DM Sans',sans-serif;font-weight:500;transition:border-color .2s;}
+.fin:focus{border-color:var(--gold);}
+.fin::placeholder{color:var(--muted);}
+.fsel{width:100%;padding:11px 13px;border:1px solid var(--border);border-radius:var(--r);font-size:14px;color:var(--white);background:var(--s2);outline:none;font-family:'DM Sans',sans-serif;font-weight:500;}
+.fsel option{background:var(--s2);}
+.fsub{width:100%;padding:14px;background:var(--gold);border:none;border-radius:var(--r2);color:var(--bg);font-size:15px;font-weight:800;cursor:pointer;margin-top:6px;font-family:'DM Sans',sans-serif;letter-spacing:.3px;transition:opacity .2s;}
+.fsub:active{opacity:.85;}
+.fsub2{width:100%;padding:13px;background:var(--s2);border:none;border-radius:var(--r2);color:var(--muted);font-size:14px;font-weight:600;cursor:pointer;margin-top:8px;font-family:'DM Sans',sans-serif;}
+
+/* MODALS */
+.modal-wrap{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:200;align-items:flex-end;justify-content:center;backdrop-filter:blur(8px);}
+.modal-wrap.show{display:flex;}
+.modal{background:var(--s1);border-radius:var(--r3) var(--r3) 0 0;padding:20px 18px calc(env(safe-area-inset-bottom,0px)+24px);width:100%;max-width:430px;max-height:90vh;overflow-y:auto;border-top:1px solid var(--border);}
+.modal-handle{width:36px;height:3px;background:var(--s3);border-radius:2px;margin:0 auto 18px;}
+.modal-title{font-family:var(--font-display);font-size:20px;letter-spacing:1px;color:var(--white);margin-bottom:3px;}
+.modal-sub{font-size:12px;color:var(--muted);margin-bottom:16px;}
+.mrow{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--border);}
+.mrow:last-of-type{border-bottom:none;}
+.mkey{font-size:13px;color:var(--muted);}
+.mval{font-size:13px;font-weight:700;color:var(--white);}
+.modal-cta{width:100%;padding:14px;background:var(--gold);border:none;border-radius:var(--r2);color:var(--bg);font-size:15px;font-weight:800;cursor:pointer;margin-top:12px;font-family:'DM Sans',sans-serif;}
+.modal-close{width:100%;padding:13px;background:var(--s2);border:none;border-radius:var(--r2);color:var(--muted);font-size:14px;font-weight:600;cursor:pointer;margin-top:8px;font-family:'DM Sans',sans-serif;}
+
+/* REVIEW */
+.rev-row{padding:13px 15px;border-bottom:1px solid var(--border);}
+.rev-row:last-child{border-bottom:none;}
+.rev-top{display:flex;align-items:center;gap:10px;margin-bottom:6px;}
+.rev-av{width:30px;height:30px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--bg);flex-shrink:0;}
+.rev-name{font-size:13px;font-weight:700;color:var(--white);flex:1;}
+.rev-stars{color:var(--gold);font-size:13px;letter-spacing:1px;}
+.rev-txt{font-size:12px;color:var(--muted);line-height:1.55;}
+.rev-date{font-size:10px;color:var(--s3);margin-top:4px;font-weight:600;}
+
+/* SUCCESS */
+.success{background:var(--green-dim);border:1px solid rgba(0,200,117,0.2);border-radius:var(--r2);padding:14px;margin-bottom:10px;text-align:center;display:none;}
+.success.show{display:block;}
+.success-title{font-family:var(--font-display);font-size:16px;letter-spacing:.5px;color:var(--green);}
+.success-sub{font-size:12px;color:#88ffcc;margin-top:4px;}
+
+/* TOAST */
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--gold);color:var(--bg);padding:10px 22px;border-radius:100px;font-size:13px;font-weight:700;white-space:nowrap;opacity:0;transition:opacity .2s;pointer-events:none;z-index:300;font-family:'DM Sans',sans-serif;}
+.toast.show{opacity:1;}
+.empty{padding:28px;text-align:center;color:var(--muted);font-size:13px;}
+
+/* ACTIVITY */
+.act-row{display:flex;align-items:center;gap:12px;padding:11px 15px;border-bottom:1px solid var(--border);cursor:default;}
+.act-row:last-child{border-bottom:none;}
+.act-ic{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="tb-row">
+      <div class="logo-wrap">
+        <div class="logo-box">✂️</div>
+        <div>
+          <div class="logo-name">URBAN CUTZ</div>
+          <div class="logo-sub">Dallas, TX · Bryan's Dashboard</div>
+        </div>
+      </div>
+      <div class="av">B</div>
+    </div>
+    <div class="nav-tabs">
+      <div class="ntab on" id="nt0" onclick="goPage(0)">HOME</div>
+      <div class="ntab" id="nt1" onclick="goPage(1)">APPOINTMENTS</div>
+      <div class="ntab" id="nt2" onclick="goPage(2)">CLIENTS</div>
+      <div class="ntab" id="nt3" onclick="goPage(3)">SERVICES</div>
+      <div class="ntab" id="nt4" onclick="goPage(4)">REVIEWS</div>
+      <div class="ntab" id="nt5" onclick="goPage(5)">BOOK</div>
+    </div>
+  </div>
+
+  <div class="pages">
+
+    <!-- HOME -->
+    <div class="page on" id="page0">
+      <div class="hero">
+        <div class="hero-greeting">Good Morning</div>
+        <div class="hero-name">BRYAN 💈</div>
+        <div class="hero-date" id="hero-date">Tuesday, April 28 · Dallas, TX</div>
+        <div class="hero-chips">
+          <div class="chip"><div class="chip-val" id="hc0">9</div><div class="chip-lbl">Appts Today</div></div>
+          <div class="chip"><div class="chip-val" id="hc1">$540</div><div class="chip-lbl">Today's Rev</div></div>
+          <div class="chip"><div class="chip-val" id="hc2">4.9⭐</div><div class="chip-lbl">Rating</div></div>
+          <div class="chip"><div class="chip-val" id="hc3">0</div><div class="chip-lbl">No-Shows</div></div>
+        </div>
+      </div>
+
+      <div class="noshow">
+        <div class="noshow-ic">🛡️</div>
+        <div>
+          <div class="noshow-title">NO-SHOW PROTECTION ON</div>
+          <div class="noshow-sub">Auto-reminder texts go out 24hrs before every appointment. Cuts no-shows by 80% — saves you ~$200/week.</div>
+        </div>
+      </div>
+
+      <div class="alert"><div class="alert-dot"></div><div class="alert-txt">Marcus J. hasn't confirmed his 3:00 PM slot. Reminder sent automatically. Tap to call him.</div></div>
+
+      <div class="metrics">
+        <div class="mc"><div class="mc-lbl">This Week</div><div class="mc-val">$1,840</div><div class="mc-badge" style="background:var(--green-dim);color:var(--green);">+$240 vs last</div></div>
+        <div class="mc"><div class="mc-lbl">This Month</div><div class="mc-val">$6,420</div><div class="mc-badge" style="background:rgba(201,168,76,0.1);color:var(--gold);">Best month</div></div>
+        <div class="mc"><div class="mc-lbl">Total Clients</div><div class="mc-val">94</div><div class="mc-badge" style="background:var(--green-dim);color:var(--green);">+6 this month</div></div>
+        <div class="mc"><div class="mc-lbl">Avg per Client</div><div class="mc-val">$48</div><div class="mc-badge" style="background:rgba(201,168,76,0.1);color:var(--gold);">Per visit</div></div>
+      </div>
+
+      <div class="sec"><div class="sec-title">NEXT UP</div><button class="sec-btn" onclick="goPage(1)">See All</button></div>
+      <div class="card"><div id="next-up"></div></div>
+
+      <div class="sec"><div class="sec-title">RECENT ACTIVITY</div></div>
+      <div class="card"><div id="activity"></div></div>
+    </div>
+
+    <!-- APPOINTMENTS -->
+    <div class="page" id="page1">
+      <div class="sec"><div class="sec-title">TODAY'S APPOINTMENTS</div><button class="sec-btn" onclick="openAddAppt()">+ Book</button></div>
+      <div class="card"><div id="appt-list"></div></div>
+    </div>
+
+    <!-- CLIENTS -->
+    <div class="page" id="page2">
+      <div class="sec"><div class="sec-title">CLIENT BOOK</div><button class="sec-btn" onclick="openAddClient()">+ Add</button></div>
+      <div class="card"><div id="client-list"></div></div>
+    </div>
+
+    <!-- SERVICES -->
+    <div class="page" id="page3">
+      <div class="sec"><div class="sec-title">SERVICE MENU</div></div>
+      <div class="card"><div id="svc-list"></div></div>
+      <div class="noshow" style="margin-top:4px;">
+        <div class="noshow-ic">💰</div>
+        <div>
+          <div class="noshow-title">UPSELL TRACKER</div>
+          <div class="noshow-sub">Add beard trims, line-ups, and treatments to any booking. Average ticket goes from $35 to $55 with one upsell.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- REVIEWS -->
+    <div class="page" id="page4">
+      <div class="metrics" style="margin-top:0;">
+        <div class="mc"><div class="mc-lbl">Avg Rating</div><div class="mc-val">4.9 ⭐</div><div class="mc-badge" style="background:rgba(201,168,76,0.1);color:var(--gold);">Excellent</div></div>
+        <div class="mc"><div class="mc-lbl">Total Reviews</div><div class="mc-val">63</div><div class="mc-badge" style="background:var(--green-dim);color:var(--green);">+11 this mo</div></div>
+      </div>
+      <div class="noshow" style="margin-bottom:10px;">
+        <div class="noshow-ic">💬</div>
+        <div>
+          <div class="noshow-title">AUTO REVIEW REQUESTS</div>
+          <div class="noshow-sub">1 hour after every appointment, client gets a text asking for a Google review. Fully automatic — zero effort from you.</div>
+        </div>
+      </div>
+      <div class="sec"><div class="sec-title">RECENT REVIEWS</div></div>
+      <div class="card"><div id="review-list"></div></div>
+    </div>
+
+    <!-- BOOKING -->
+    <div class="page" id="page5">
+      <div class="success" id="book-success">
+        <div class="success-title">BOOKING CONFIRMED 💈</div>
+        <div class="success-sub">You'll get a reminder text 24hrs before your appointment.</div>
+      </div>
+      <div class="noshow" style="margin-bottom:10px;">
+        <div class="noshow-ic">🔗</div>
+        <div>
+          <div class="noshow-title">YOUR BOOKING LINK</div>
+          <div class="noshow-sub">Share this page with clients. They book themselves — you get a notification. No more "you got anything Saturday?" texts.</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><div><div class="card-title">BOOK YOUR CUT</div><div class="card-sub">Urban Cutz · Dallas, TX · (214) 467-9903</div></div></div>
+        <div class="form-body">
+          <div class="frow"><div><div class="flbl">Your Name</div><input class="fin" id="bk-name" placeholder="Full name"></div><div><div class="flbl">Phone</div><input class="fin" id="bk-phone" type="tel" placeholder="(214) 000-0000"></div></div>
+          <div class="frow full"><div><div class="flbl">Service</div>
+            <select class="fsel" id="bk-svc">
+              <option>Regular Haircut — $35</option>
+              <option>Fade — $40</option>
+              <option>Skin Fade — $45</option>
+              <option>Haircut + Beard Trim — $55</option>
+              <option>Full Shape Up — $50</option>
+              <option>Kids Cut — $25</option>
+              <option>Design/Line Art — $60</option>
+            </select>
+          </div></div>
+          <div class="frow"><div><div class="flbl">Date</div><input class="fin" id="bk-date" type="date"></div><div><div class="flbl">Time</div>
+            <select class="fsel" id="bk-time">
+              <option>9:00 AM</option><option>9:30 AM</option><option>10:00 AM</option><option>10:30 AM</option>
+              <option>11:00 AM</option><option>11:30 AM</option><option>12:00 PM</option><option>12:30 PM</option>
+              <option>1:00 PM</option><option>1:30 PM</option><option>2:00 PM</option><option>2:30 PM</option>
+              <option>3:00 PM</option><option>3:30 PM</option><option>4:00 PM</option><option>4:30 PM</option>
+              <option>5:00 PM</option><option>5:30 PM</option><option>6:00 PM</option>
+            </select>
+          </div></div>
+          <div class="frow full"><div><div class="flbl">Notes</div><input class="fin" id="bk-notes" placeholder="e.g. taper fade, line up, beard trim..."></div></div>
+          <button class="fsub" onclick="submitBooking()">CONFIRM BOOKING →</button>
+          <div style="text-align:center;margin-top:10px;font-size:11px;color:var(--muted);">📱 You'll get a reminder text 24hrs before · (214) 467-9903</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- APPT DETAIL MODAL -->
+<div class="modal-wrap" id="appt-modal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="am-title"></div>
+    <div class="modal-sub" id="am-sub"></div>
+    <div id="am-body"></div>
+    <button class="modal-cta" id="am-cta">Mark Done ✓</button>
+    <button class="modal-close" onclick="closeModal('appt-modal')">Dismiss</button>
+  </div>
+</div>
+
+<!-- ADD APPT MODAL -->
+<div class="modal-wrap" id="add-appt-modal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">NEW APPOINTMENT</div>
+    <div class="form-body" style="padding:12px 0 0;">
+      <div class="frow"><div><div class="flbl">Client Name</div><input class="fin" id="na-name" placeholder="Full name"></div><div><div class="flbl">Phone</div><input class="fin" id="na-phone" type="tel" placeholder="(214) 000-0000"></div></div>
+      <div class="frow full"><div><div class="flbl">Service</div><select class="fsel" id="na-svc"><option>Regular Haircut</option><option>Fade</option><option>Skin Fade</option><option>Haircut + Beard Trim</option><option>Full Shape Up</option><option>Kids Cut</option><option>Design/Line Art</option></select></div></div>
+      <div class="frow"><div><div class="flbl">Time</div><select class="fsel" id="na-time"><option>9:00 AM</option><option>10:00 AM</option><option>11:00 AM</option><option>12:00 PM</option><option>1:00 PM</option><option>2:00 PM</option><option>3:00 PM</option><option>4:00 PM</option><option>5:00 PM</option><option>6:00 PM</option></select></div><div><div class="flbl">Price ($)</div><input class="fin" id="na-price" type="number" placeholder="40"></div></div>
+    </div>
+    <button class="modal-cta" onclick="saveAddAppt()">Add Appointment →</button>
+    <button class="modal-close" onclick="closeModal('add-appt-modal')">Cancel</button>
+  </div>
+</div>
+
+<!-- ADD CLIENT MODAL -->
+<div class="modal-wrap" id="add-client-modal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">ADD CLIENT</div>
+    <div class="form-body" style="padding:12px 0 0;">
+      <div class="frow"><div><div class="flbl">Full Name</div><input class="fin" id="nc-name" placeholder="Full name"></div><div><div class="flbl">Phone</div><input class="fin" id="nc-phone" type="tel" placeholder="(214) 000-0000"></div></div>
+      <div class="frow full"><div><div class="flbl">Usual Cut</div><select class="fsel" id="nc-cut"><option>Regular Haircut</option><option>Fade</option><option>Skin Fade</option><option>Haircut + Beard Trim</option><option>Design/Line Art</option></select></div></div>
+    </div>
+    <button class="modal-cta" onclick="saveAddClient()">Add Client →</button>
+    <button class="modal-close" onclick="closeModal('add-client-modal')">Cancel</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var appointments=[
+  {id:1,name:'Darius M.',phone:'(214) 555-0101',svc:'Skin Fade',time:'9:00 AM',price:45,status:'done',note:'Low taper'},
+  {id:2,name:'Jordan K.',phone:'(214) 555-0202',svc:'Haircut + Beard Trim',time:'9:45 AM',price:55,status:'done',note:''},
+  {id:3,name:'Chris T.',phone:'(214) 555-0303',svc:'Fade',time:'10:30 AM',price:40,status:'done',note:'Drop fade'},
+  {id:4,name:'Andre W.',phone:'(214) 555-0404',svc:'Design/Line Art',time:'11:15 AM',price:60,status:'done',note:'Waves design'},
+  {id:5,name:'Mike R.',phone:'(214) 555-0505',svc:'Regular Haircut',time:'12:00 PM',price:35,status:'done',note:''},
+  {id:6,name:'Tre B.',phone:'(214) 555-0606',svc:'Full Shape Up',time:'1:00 PM',price:50,status:'done',note:'Sharp lineup'},
+  {id:7,name:'DeShawn L.',phone:'(214) 555-0707',svc:'Skin Fade',time:'2:00 PM',price:45,status:'upcoming',note:'Bald fade'},
+  {id:8,name:'Marcus J.',phone:'(214) 555-0808',svc:'Haircut + Beard Trim',time:'3:00 PM',price:55,status:'unconfirmed',note:'Unconfirmed'},
+  {id:9,name:'Tyler N.',phone:'(214) 555-0909',svc:'Kids Cut',time:'4:00 PM',price:25,status:'upcoming',note:''},
+];
+var clients=[
+  {name:'Darius M.',phone:'(214) 555-0101',visits:28,spent:1260,cut:'Skin Fade',last:'Today',color:'#c9a84c'},
+  {name:'Jordan K.',phone:'(214) 555-0202',visits:22,spent:1210,cut:'Haircut + Beard',last:'Today',color:'#e8c96a'},
+  {name:'Andre W.',phone:'(214) 555-0404',visits:19,spent:1140,cut:'Design/Line Art',last:'Today',color:'#c9a84c'},
+  {name:'Chris T.',phone:'(214) 555-0303',visits:15,spent:600,cut:'Fade',last:'Today',color:'#e8c96a'},
+  {name:'Tre B.',phone:'(214) 555-0606',visits:12,spent:600,cut:'Full Shape Up',last:'Today',color:'#c9a84c'},
+  {name:'Mike R.',phone:'(214) 555-0505',visits:10,spent:350,cut:'Regular Haircut',last:'Today',color:'#e8c96a'},
+];
+var services=[
+  {ic:'💈',name:'Regular Haircut',price:35,dur:'30 min'},
+  {ic:'⚡',name:'Fade',price:40,dur:'45 min'},
+  {ic:'🔥',name:'Skin Fade',price:45,dur:'45 min'},
+  {ic:'🧔',name:'Haircut + Beard Trim',price:55,dur:'60 min'},
+  {ic:'✨',name:'Full Shape Up',price:50,dur:'45 min'},
+  {ic:'👦',name:'Kids Cut',price:25,dur:'25 min'},
+  {ic:'🎨',name:'Design / Line Art',price:60,dur:'60 min'},
+  {ic:'🪒',name:'Beard Trim Only',price:20,dur:'20 min'},
+];
+var reviews=[
+  {name:'Darius M.',stars:5,txt:'Bryan is the GOAT fr. Every cut is clean and he never misses. The app reminder is 🔥 too — never forget my appointment.',date:'Today'},
+  {name:'Jordan K.',stars:5,txt:'Best barber in Dallas no cap. My beard game been on point since I started coming here. Highly recommend.',date:'Yesterday'},
+  {name:'Andre W.',stars:5,txt:'Bro did my design exactly how I wanted it. Dude is talented as hell. Book with Urban Cutz you won\'t regret it.',date:'Apr 26'},
+  {name:'Chris T.',stars:5,txt:'Consistent every single time. I drive 30 minutes just to get my hair cut here. That\'s how good he is.',date:'Apr 25'},
+  {name:'Tre B.',stars:5,txt:'Sharp lineup, good vibes, fair price. Been coming here for a year and never leaving.',date:'Apr 24'},
+];
+var golds=['#c9a84c','#e8c96a','#b8943c','#d4b55a','#c09030','#e0c060'];
+
+function toast(m){var el=document.getElementById('toast');el.textContent=m;el.classList.add('show');clearTimeout(window._tt);window._tt=setTimeout(function(){el.classList.remove('show');},2000);}
+function openModal(id){document.getElementById(id).classList.add('show');}
+function closeModal(id){document.getElementById(id).classList.remove('show');}
+document.querySelectorAll('.modal-wrap').forEach(function(el){el.addEventListener('click',function(e){if(e.target===el)el.classList.remove('show');});});
+
+function ini(name){return name.split(' ').map(function(w){return w[0];}).join('').slice(0,2);}
+
+function statusPill(s){
+  if(s==='done')return'<span class="pill pill-green">Done</span>';
+  if(s==='upcoming')return'<span class="pill pill-gold">Upcoming</span>';
+  if(s==='noshow')return'<span class="pill pill-red">No-show</span>';
+  return'<span class="pill pill-amber">Unconfirmed</span>';
+}
+
+function renderNextUp(){
+  var el=document.getElementById('next-up');
+  var next=appointments.filter(function(a){return a.status==='upcoming'||a.status==='unconfirmed';});
+  if(!next.length){el.innerHTML='<div class="empty">All done for today! 🎉</div>';return;}
+  el.innerHTML=next.map(function(a,i){
+    return'<div class="arow" onclick="openAppt('+a.id+')">'
+      +'<div class="aav" style="background:'+golds[i%golds.length]+';">'+ini(a.name)+'</div>'
+      +'<div class="ainfo"><div class="aname">'+a.name+'</div><div class="asvc">'+a.svc+'</div></div>'
+      +'<div><div class="atime">'+a.time+'</div><div class="astatus">$'+a.price+'</div></div>'
+      +'</div>';
+  }).join('');
+}
+
+function renderActivity(){
+  var items=[
+    {ic:'💰',bg:'var(--green-dim)',txt:'Tre B. paid — Full Shape Up',sub:'$50 · 1:00 PM'},
+    {ic:'✅',bg:'var(--green-dim)',txt:'Mike R. done — Regular Haircut',sub:'$35 · 12:00 PM'},
+    {ic:'⭐',bg:'rgba(201,168,76,0.1)',txt:'New 5-star review from Andre W.',sub:'"Bro did my design exactly how I wanted"'},
+    {ic:'📅',bg:'rgba(201,168,76,0.1)',txt:'Tyler N. booked — Kids Cut',sub:'4:00 PM today'},
+    {ic:'💬',bg:'var(--green-dim)',txt:'Review request sent to Chris T.',sub:'Auto-sent 1hr after appointment'},
+  ];
+  document.getElementById('activity').innerHTML=items.map(function(item){
+    return'<div class="act-row"><div class="act-ic" style="background:'+item.bg+';">'+item.ic+'</div>'
+      +'<div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:600;color:var(--white);">'+item.txt+'</div><div style="font-size:11px;color:var(--muted);margin-top:2px;">'+item.sub+'</div></div>'
+      +'</div>';
+  }).join('');
+}
+
+function renderAppts(){
+  var el=document.getElementById('appt-list');
+  el.innerHTML=appointments.map(function(a,i){
+    return'<div class="arow" onclick="openAppt('+a.id+')">'
+      +'<div class="aav" style="background:'+golds[i%golds.length]+';">'+ini(a.name)+'</div>'
+      +'<div class="ainfo"><div class="aname">'+a.name+'</div><div class="asvc">'+a.svc+'</div></div>'
+      +'<div style="text-align:right;flex-shrink:0;"><div class="atime">'+a.time+'</div>'+statusPill(a.status)+'</div>'
+      +'</div>';
+  }).join('');
+}
+
+function openAppt(id){
+  var a=appointments.find(function(x){return x.id===id;});if(!a)return;
+  document.getElementById('am-title').textContent=a.name;
+  document.getElementById('am-sub').textContent=a.svc+' · '+a.time;
+  document.getElementById('am-body').innerHTML=
+    '<div class="mrow"><span class="mkey">Service</span><span class="mval">'+a.svc+'</span></div>'
+    +'<div class="mrow"><span class="mkey">Time</span><span class="mval">'+a.time+'</span></div>'
+    +'<div class="mrow"><span class="mkey">Price</span><span class="mval" style="color:var(--gold);">$'+a.price+'</span></div>'
+    +'<div class="mrow"><span class="mkey">Status</span>'+statusPill(a.status)+'</div>'
+    +(a.note?'<div class="mrow"><span class="mkey">Note</span><span class="mval">'+a.note+'</span></div>':'')
+    +'<div class="mrow"><span class="mkey">Phone</span><span class="mval" style="color:var(--gold);">'+a.phone+'</span></div>';
+  var btn=document.getElementById('am-cta');
+  if(a.status==='done'){btn.textContent='Send Review Request 💬';btn.onclick=function(){toast('Review request sent!');closeModal('appt-modal');};}
+  else if(a.status==='noshow'){btn.textContent='Rebook Client';btn.onclick=function(){closeModal('appt-modal');goPage(5);};}
+  else if(a.status==='unconfirmed'){btn.textContent='Call to Confirm 📞';btn.onclick=function(){window.location.href='tel:'+a.phone.replace(/\D/g,'');};}
+  else{btn.textContent='Mark as Done ✓';btn.onclick=function(){a.status='done';renderAppts();renderNextUp();closeModal('appt-modal');toast('Done! 💈');};}
+  openModal('appt-modal');
+}
+
+function renderClients(){
+  document.getElementById('client-list').innerHTML=clients.map(function(c,i){
+    return'<div class="client-row" onclick="toast(\'Client details in full version!\')">'
+      +'<div class="client-av" style="background:'+golds[i%golds.length]+';">'+ini(c.name)+'</div>'
+      +'<div style="flex:1;min-width:0;"><div class="client-name">'+c.name+'</div><div class="client-sub">'+c.cut+' · '+c.visits+' visits · Last: '+c.last+'</div></div>'
+      +'<div style="text-align:right;flex-shrink:0;"><div class="client-spent">$'+c.spent+'</div><div class="client-visits">total spent</div></div>'
+      +'</div>';
+  }).join('');
+}
+
+function renderServices(){
+  document.getElementById('svc-list').innerHTML=services.map(function(s){
+    return'<div class="svc-row">'
+      +'<div class="svc-ic">'+s.ic+'</div>'
+      +'<div style="flex:1;"><div class="svc-name">'+s.name+'</div><div class="svc-dur">'+s.dur+'</div></div>'
+      +'<div class="svc-price">$'+s.price+'</div>'
+      +'</div>';
+  }).join('');
+}
+
+function renderReviews(){
+  document.getElementById('review-list').innerHTML=reviews.map(function(r){
+    var stars='★'.repeat(r.stars)+'☆'.repeat(5-r.stars);
+    return'<div class="rev-row">'
+      +'<div class="rev-top"><div class="rev-av">'+ini(r.name)+'</div><div class="rev-name">'+r.name+'</div><div class="rev-stars">'+stars+'</div></div>'
+      +'<div class="rev-txt">'+r.txt+'</div>'
+      +'<div class="rev-date">'+r.date+'</div>'
+      +'</div>';
+  }).join('');
+}
+
+function openAddAppt(){document.getElementById('na-name').value='';document.getElementById('na-phone').value='';document.getElementById('na-price').value='';openModal('add-appt-modal');}
+function saveAddAppt(){
+  var nm=document.getElementById('na-name').value.trim();if(!nm){toast('Enter client name');return;}
+  appointments.push({id:Date.now(),name:nm,phone:document.getElementById('na-phone').value,svc:document.getElementById('na-svc').value,time:document.getElementById('na-time').value,price:parseInt(document.getElementById('na-price').value)||40,status:'upcoming',note:''});
+  closeModal('add-appt-modal');renderAppts();renderNextUp();toast('Appointment added!');
+}
+function openAddClient(){document.getElementById('nc-name').value='';document.getElementById('nc-phone').value='';openModal('add-client-modal');}
+function saveAddClient(){
+  var nm=document.getElementById('nc-name').value.trim();if(!nm){toast('Enter name');return;}
+  clients.unshift({name:nm,phone:document.getElementById('nc-phone').value,visits:1,spent:0,cut:document.getElementById('nc-cut').value,last:'Today',color:'#c9a84c'});
+  closeModal('add-client-modal');renderClients();toast('Client added!');
+}
+function submitBooking(){
+  var nm=document.getElementById('bk-name').value.trim();
+  var dt=document.getElementById('bk-date').value;
+  if(!nm||!dt){toast('Fill in your name and date');return;}
+  appointments.push({id:Date.now(),name:nm,phone:document.getElementById('bk-phone').value,svc:document.getElementById('bk-svc').value.split(' —')[0],time:document.getElementById('bk-time').value,price:40,status:'upcoming',note:document.getElementById('bk-notes').value});
+  document.getElementById('bk-name').value='';document.getElementById('bk-phone').value='';document.getElementById('bk-notes').value='';
+  var sb=document.getElementById('book-success');sb.classList.add('show');
+  setTimeout(function(){sb.classList.remove('show');},4000);
+  renderAppts();renderNextUp();toast('Booking confirmed! 💈');
+}
+function goPage(n){
+  for(var i=0;i<6;i++){var p=document.getElementById('page'+i);var nt=document.getElementById('nt'+i);if(p)p.classList.toggle('on',i===n);if(nt)nt.classList.toggle('on',i===n);}
+  if(n===1)renderAppts();if(n===2)renderClients();if(n===3)renderServices();if(n===4)renderReviews();
+}
+(function(){
+  var d=new Date();
+  var days=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  var months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('hero-date').textContent=days[d.getDay()]+', '+months[d.getMonth()]+' '+d.getDate()+' · Dallas, TX';
+  var today=new Date().toISOString().split('T')[0];
+  document.getElementById('bk-date').value=today;
+  renderNextUp();renderActivity();
+})();
+</script>
+</body>
+</html>
