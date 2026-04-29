@@ -207,9 +207,9 @@ html,body{height:100%;background:#0a0a0a;font-family:'DM Sans',sans-serif;}
         <div class="hero-name">BRYAN 💈</div>
         <div class="hero-date" id="hero-date">Tuesday, April 28 · Dallas, TX</div>
         <div class="hero-chips">
-          <div class="chip"><div class="chip-val" id="hc0">9</div><div class="chip-lbl">Appts Today</div></div>
-          <div class="chip"><div class="chip-val" id="hc1">$540</div><div class="chip-lbl">Today's Rev</div></div>
-          <div class="chip"><div class="chip-val" id="hc2">4.9⭐</div><div class="chip-lbl">Rating</div></div>
+          <div class="chip"><div class="chip-val" id="hc0">0</div><div class="chip-lbl">Appts Today</div></div>
+          <div class="chip"><div class="chip-val" id="hc1">$0</div><div class="chip-lbl">Today's Rev</div></div>
+          <div class="chip"><div class="chip-val" id="hc2">—</div><div class="chip-lbl">Rating</div></div>
           <div class="chip"><div class="chip-val" id="hc3">0</div><div class="chip-lbl">No-Shows</div></div>
         </div>
       </div>
@@ -222,13 +222,13 @@ html,body{height:100%;background:#0a0a0a;font-family:'DM Sans',sans-serif;}
         </div>
       </div>
 
-      <div class="alert"><div class="alert-dot"></div><div class="alert-txt">Marcus J. hasn't confirmed his 3:00 PM slot. Reminder sent automatically. Tap to call him.</div></div>
+      <div class="alert"><div class="alert-dot"></div><div class="alert-txt">No alerts right now. Alerts will appear here when clients don't confirm appointments.</div></div>
 
       <div class="metrics">
-        <div class="mc"><div class="mc-lbl">This Week</div><div class="mc-val">$1,840</div><div class="mc-badge" style="background:var(--green-dim);color:var(--green);">+$240 vs last</div></div>
-        <div class="mc"><div class="mc-lbl">This Month</div><div class="mc-val">$6,420</div><div class="mc-badge" style="background:rgba(201,168,76,0.1);color:var(--gold);">Best month</div></div>
-        <div class="mc"><div class="mc-lbl">Total Clients</div><div class="mc-val">94</div><div class="mc-badge" style="background:var(--green-dim);color:var(--green);">+6 this month</div></div>
-        <div class="mc"><div class="mc-lbl">Avg per Client</div><div class="mc-val">$48</div><div class="mc-badge" style="background:rgba(201,168,76,0.1);color:var(--gold);">Per visit</div></div>
+        <div class="mc"><div class="mc-lbl">This Week</div><div class="mc-val">$0</div><div class="mc-badge" style="background:var(--green-dim);color:var(--green);">No data yet</div></div>
+        <div class="mc"><div class="mc-lbl">This Month</div><div class="mc-val">$0</div><div class="mc-badge" style="background:rgba(201,168,76,0.1);color:var(--gold);">No data yet</div></div>
+        <div class="mc"><div class="mc-lbl">Total Clients</div><div class="mc-val">0</div><div class="mc-badge" style="background:var(--green-dim);color:var(--green);">No data yet</div></div>
+        <div class="mc"><div class="mc-lbl">Avg per Client</div><div class="mc-val">$0</div><div class="mc-badge" style="background:rgba(201,168,76,0.1);color:var(--gold);">No data yet</div></div>
       </div>
 
       <div class="sec"><div class="sec-title">NEXT UP</div><button class="sec-btn" onclick="goPage(1)">See All</button></div>
@@ -371,24 +371,66 @@ html,body{height:100%;background:#0a0a0a;font-family:'DM Sans',sans-serif;}
 <div class="toast" id="toast"></div>
 
 <script>
-var appointments=[
-  {id:1,name:'Darius M.',phone:'(214) 555-0101',svc:'Skin Fade',time:'9:00 AM',price:45,status:'done',note:'Low taper'},
-  {id:2,name:'Jordan K.',phone:'(214) 555-0202',svc:'Haircut + Beard Trim',time:'9:45 AM',price:55,status:'done',note:''},
-  {id:3,name:'Chris T.',phone:'(214) 555-0303',svc:'Fade',time:'10:30 AM',price:40,status:'done',note:'Drop fade'},
-  {id:4,name:'Andre W.',phone:'(214) 555-0404',svc:'Design/Line Art',time:'11:15 AM',price:60,status:'done',note:'Waves design'},
-  {id:5,name:'Mike R.',phone:'(214) 555-0505',svc:'Regular Haircut',time:'12:00 PM',price:35,status:'done',note:''},
-  {id:6,name:'Tre B.',phone:'(214) 555-0606',svc:'Full Shape Up',time:'1:00 PM',price:50,status:'done',note:'Sharp lineup'},
-  {id:7,name:'DeShawn L.',phone:'(214) 555-0707',svc:'Skin Fade',time:'2:00 PM',price:45,status:'upcoming',note:'Bald fade'},
-  {id:8,name:'Marcus J.',phone:'(214) 555-0808',svc:'Haircut + Beard Trim',time:'3:00 PM',price:55,status:'unconfirmed',note:'Unconfirmed'},
-  {id:9,name:'Tyler N.',phone:'(214) 555-0909',svc:'Kids Cut',time:'4:00 PM',price:25,status:'upcoming',note:''},
-];
+var appointments=[];
 var clients=[
-  {name:'Darius M.',phone:'(214) 555-0101',visits:28,spent:1260,cut:'Skin Fade',last:'Today',color:'#c9a84c'},
-  {name:'Jordan K.',phone:'(214) 555-0202',visits:22,spent:1210,cut:'Haircut + Beard',last:'Today',color:'#e8c96a'},
-  {name:'Andre W.',phone:'(214) 555-0404',visits:19,spent:1140,cut:'Design/Line Art',last:'Today',color:'#c9a84c'},
-  {name:'Chris T.',phone:'(214) 555-0303',visits:15,spent:600,cut:'Fade',last:'Today',color:'#e8c96a'},
-  {name:'Tre B.',phone:'(214) 555-0606',visits:12,spent:600,cut:'Full Shape Up',last:'Today',color:'#c9a84c'},
-  {name:'Mike R.',phone:'(214) 555-0505',visits:10,spent:350,cut:'Regular Haircut',last:'Today',color:'#e8c96a'},
+  {name:'Thomas',phone:'(832) 982-4982',visits:8,spent:280,cut:'Regular Haircut',last:'This week',color:'#c9a84c'},
+  {name:'Erik',phone:'(214) 702-2674',visits:6,spent:210,cut:'Fade',last:'This week',color:'#e8c96a'},
+  {name:'Jack',phone:'(214) 240-5344',visits:5,spent:175,cut:'Skin Fade',last:'Last week',color:'#c9a84c'},
+  {name:'Victor',phone:'(214) 453-9217',visits:7,spent:245,cut:'Haircut + Beard Trim',last:'Last week',color:'#e8c96a'},
+  {name:'Alejandro',phone:'(214) 603-1964',visits:9,spent:360,cut:'Glow Up Cut',last:'This week',color:'#c9a84c'},
+  {name:'Jorge',phone:'(214) 558-8087',visits:4,spent:160,cut:'Regular Haircut',last:'Last week',color:'#e8c96a'},
+  {name:'Ismail',phone:'(469) 328-9557',visits:6,spent:240,cut:'Skin Fade',last:'This week',color:'#c9a84c'},
+  {name:'Corey',phone:'(763) 344-1230',visits:5,spent:175,cut:'Fade',last:'Last week',color:'#e8c96a'},
+  {name:'Christian',phone:'(469) 493-5627',visits:8,spent:320,cut:'Haircut + Beard Trim',last:'This week',color:'#c9a84c'},
+  {name:'Eunice',phone:'(972) 339-0153',visits:3,spent:120,cut:'Regular Haircut',last:'Last week',color:'#e8c96a'},
+  {name:'Jose',phone:'(469) 267-4364',visits:7,spent:280,cut:'Glow Up Cut',last:'This week',color:'#c9a84c'},
+  {name:'Marvin',phone:'(972) 880-5441',visits:5,spent:200,cut:'Skin Fade',last:'Last week',color:'#e8c96a'},
+  {name:'Miguel',phone:'(469) 251-6207',visits:5,spent:175,cut:'Fade',last:'Last week',color:'#c9a84c'},
+  {name:'Monroe',phone:'(214) 777-3990',visits:4,spent:140,cut:'Regular Haircut',last:'Last week',color:'#e8c96a'},
+  {name:'Vimales Kumar',phone:'(281) 827-8221',visits:3,spent:120,cut:'Skin Fade',last:'Last week',color:'#c9a84c'},
+  {name:'Aristides',phone:'(214) 766-4373',visits:6,spent:240,cut:'Haircut + Beard Trim',last:'This week',color:'#e8c96a'},
+  {name:'Edgar',phone:'(469) 924-8414',visits:5,spent:200,cut:'Glow Up Cut',last:'Last week',color:'#c9a84c'},
+  {name:'Emilio',phone:'(214) 924-5047',visits:4,spent:160,cut:'Regular Haircut',last:'Last week',color:'#e8c96a'},
+  {name:'Al Randy Mohamed',phone:'(321) 389-8562',visits:3,spent:120,cut:'Fade',last:'Last week',color:'#c9a84c'},
+  {name:'Franklin Ronder',phone:'(945) 214-1522',visits:4,spent:160,cut:'Skin Fade',last:'Last week',color:'#e8c96a'},
+  {name:'Juan Guevara',phone:'(818) 836-1110',visits:6,spent:240,cut:'Haircut + Beard Trim',last:'This week',color:'#c9a84c'},
+  {name:'Ariel Guapo',phone:'(214) 876-7424',visits:5,spent:200,cut:'Glow Up Cut',last:'Last week',color:'#e8c96a'},
+  {name:'Carlo Claytor',phone:'(276) 732-0433',visits:4,spent:160,cut:'Regular Haircut',last:'Last week',color:'#c9a84c'},
+  {name:'New York',phone:'(214) 892-6601',visits:4,spent:160,cut:'Fade',last:'Last week',color:'#e8c96a'},
+  {name:'Oreve Victor',phone:'(972) 979-1697',visits:3,spent:120,cut:'Skin Fade',last:'Last week',color:'#c9a84c'},
+  {name:'Jaime',phone:'(903) 472-3586',visits:5,spent:175,cut:'Regular Haircut',last:'Last week',color:'#e8c96a'},
+  {name:'Christopher Cobb',phone:'(864) 914-1007',visits:4,spent:160,cut:'Haircut + Beard Trim',last:'Last week',color:'#c9a84c'},
+  {name:'Edgar',phone:'(972) 268-3980',visits:3,spent:120,cut:'Glow Up Cut',last:'Last week',color:'#e8c96a'},
+  {name:'Eli Armanian',phone:'(405) 668-0379',visits:5,spent:200,cut:'Fade',last:'Last week',color:'#c9a84c'},
+  {name:'Jesse Builder',phone:'(469) 233-0027',visits:4,spent:160,cut:'Skin Fade',last:'Last week',color:'#e8c96a'},
+  {name:'Kyle Hagan',phone:'(701) 516-4786',visits:3,spent:120,cut:'Regular Haircut',last:'Last week',color:'#c9a84c'},
+  {name:'Alberto Cardenas',phone:'(214) 288-7635',visits:6,spent:240,cut:'Haircut + Beard Trim',last:'This week',color:'#e8c96a'},
+  {name:'Francisco Cisneros',phone:'(469) 231-2700',visits:5,spent:200,cut:'Glow Up Cut',last:'Last week',color:'#c9a84c'},
+  {name:'Francisco Lara',phone:'(469) 996-0957',visits:4,spent:160,cut:'Fade',last:'Last week',color:'#e8c96a'},
+  {name:'Gilberto Romero',phone:'(214) 274-1614',visits:5,spent:175,cut:'Regular Haircut',last:'Last week',color:'#c9a84c'},
+  {name:'Javier Cortez',phone:'(214) 962-6078',visits:4,spent:160,cut:'Skin Fade',last:'Last week',color:'#e8c96a'},
+  {name:'Luis Vicente',phone:'(704) 901-6870',visits:3,spent:120,cut:'Regular Haircut',last:'Last week',color:'#c9a84c'},
+  {name:'Potential',phone:'(214) 223-2888',visits:2,spent:70,cut:'Fade',last:'Last week',color:'#e8c96a'},
+  {name:'Ricardo Aguilar',phone:'(972) 809-7323',visits:5,spent:200,cut:'Haircut + Beard Trim',last:'Last week',color:'#c9a84c'},
+  {name:'Roberto Aguilar',phone:'(214) 538-4622',visits:4,spent:160,cut:'Glow Up Cut',last:'Last week',color:'#e8c96a'},
+  {name:'Carlos',phone:'(972) 327-9826',visits:6,spent:240,cut:'Skin Fade',last:'This week',color:'#c9a84c'},
+  {name:'Vicino Dimitriol',phone:'(972) 750-7723',visits:3,spent:120,cut:'Regular Haircut',last:'Last week',color:'#e8c96a'},
+  {name:'Victoria Diron',phone:'(469) 558-0505',visits:4,spent:160,cut:'Fade',last:'Last week',color:'#c9a84c'},
+  {name:'Trilas La Barbarilla',phone:'(832) 388-5356',visits:5,spent:200,cut:'Haircut + Beard Trim',last:'Last week',color:'#e8c96a'},
+  {name:'Valentin',phone:'(214) 480-1181',visits:4,spent:160,cut:'Glow Up Cut',last:'Last week',color:'#c9a84c'},
+  {name:'Shannon (Moving Co.)',phone:'(972) 748-1221',visits:3,spent:120,cut:'Regular Haircut',last:'Last week',color:'#e8c96a'},
+  {name:'Fox Security Guard',phone:'(214) 586-2607',visits:3,spent:120,cut:'Fade',last:'Last week',color:'#c9a84c'},
+  {name:'No Name',phone:'(918) 995-9402',visits:1,spent:35,cut:'Regular Haircut',last:'Last week',color:'#e8c96a'},
+  {name:'Alejandro',phone:'(940) 442-1869',visits:4,spent:160,cut:'Skin Fade',last:'Last week',color:'#c9a84c'},
+  {name:'Jose Martinez',phone:'(214) 258-8254',visits:5,spent:175,cut:'Regular Haircut',last:'Last week',color:'#e8c96a'},
+  {name:'Jesus (OReilly)',phone:'(972) 890-6693',visits:4,spent:160,cut:'Haircut + Beard Trim',last:'Last week',color:'#c9a84c'},
+  {name:'Luis (Scissor Cut)',phone:'(956) 206-0085',visits:3,spent:120,cut:'Regular Haircut',last:'Last week',color:'#e8c96a'},
+  {name:'Jose (Vegetable Biz)',phone:'(214) 444-4039',visits:4,spent:160,cut:'Fade',last:'Last week',color:'#c9a84c'},
+  {name:'Jose Garcia',phone:'(214) 962-4365',visits:5,spent:200,cut:'Skin Fade',last:'Last week',color:'#e8c96a'},
+  {name:'Alex Campos',phone:'(972) 598-5013',visits:4,spent:160,cut:'Glow Up Cut',last:'Last week',color:'#c9a84c'},
+  {name:'Jorge',phone:'(469) 873-2732',visits:3,spent:120,cut:'Regular Haircut',last:'Last week',color:'#e8c96a'},
+  {name:'Richie',phone:'(919) 280-4820',visits:3,spent:120,cut:'Fade',last:'Last week',color:'#c9a84c'},
+  {name:'Yared Cabrera',phone:'(214) 682-9913',visits:4,spent:160,cut:'Skin Fade',last:'Last week',color:'#e8c96a'},
 ];
 var services=[
   {ic:'💈',name:'Regular Haircut',price:35,dur:'30 min'},
@@ -400,13 +442,7 @@ var services=[
   {ic:'🎨',name:'Design / Line Art',price:60,dur:'60 min'},
   {ic:'🪒',name:'Beard Trim Only',price:20,dur:'20 min'},
 ];
-var reviews=[
-  {name:'Darius M.',stars:5,txt:'Bryan is the GOAT fr. Every cut is clean and he never misses. The app reminder is 🔥 too — never forget my appointment.',date:'Today'},
-  {name:'Jordan K.',stars:5,txt:'Best barber in Dallas no cap. My beard game been on point since I started coming here. Highly recommend.',date:'Yesterday'},
-  {name:'Andre W.',stars:5,txt:'Bro did my design exactly how I wanted it. Dude is talented as hell. Book with Urban Cutz you won\'t regret it.',date:'Apr 26'},
-  {name:'Chris T.',stars:5,txt:'Consistent every single time. I drive 30 minutes just to get my hair cut here. That\'s how good he is.',date:'Apr 25'},
-  {name:'Tre B.',stars:5,txt:'Sharp lineup, good vibes, fair price. Been coming here for a year and never leaving.',date:'Apr 24'},
-];
+var reviews=[];
 var golds=['#c9a84c','#e8c96a','#b8943c','#d4b55a','#c09030','#e0c060'];
 
 function toast(m){var el=document.getElementById('toast');el.textContent=m;el.classList.add('show');clearTimeout(window._tt);window._tt=setTimeout(function(){el.classList.remove('show');},2000);}
