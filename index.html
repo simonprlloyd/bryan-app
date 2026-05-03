@@ -388,6 +388,9 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:var(--
   <div class="tab" onclick="showPage('revenue')" id="tab-revenue">
     <div class="tab-ic">💰</div><div class="tab-lbl">Revenue</div>
   </div>
+  <div class="tab" onclick="showPage('calendar')" id="tab-calendar">
+    <div class="tab-ic">📆</div><div class="tab-lbl">Calendar</div>
+  </div>
 </div>
 
 <!-- ADD APPOINTMENT SHEET -->
@@ -452,6 +455,33 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:var(--
   </div>
 </div>
 
+
+<!-- CALENDAR PAGE -->
+<div class="page" id="page-calendar">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <button onclick="calPrev()" style="width:34px;height:34px;background:var(--s1);border:1px solid var(--border);border-radius:50%;color:var(--white);font-size:16px;cursor:pointer;">‹</button>
+      <div style="font-family:var(--fd);font-size:22px;letter-spacing:.5px" id="cal-month-label">May 2026</div>
+      <button onclick="calNext()" style="width:34px;height:34px;background:var(--s1);border:1px solid var(--border);border-radius:50%;color:var(--white);font-size:16px;cursor:pointer;">›</button>
+    </div>
+    <button onclick="calToday()" style="padding:7px 14px;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:20px;color:var(--gold);font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font);">Today</button>
+  </div>
+  <!-- Day names -->
+  <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:4px;">
+    <div style="text-align:center;font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;padding:4px 0">Su</div>
+    <div style="text-align:center;font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;padding:4px 0">Mo</div>
+    <div style="text-align:center;font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;padding:4px 0">Tu</div>
+    <div style="text-align:center;font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;padding:4px 0">We</div>
+    <div style="text-align:center;font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;padding:4px 0">Th</div>
+    <div style="text-align:center;font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;padding:4px 0">Fr</div>
+    <div style="text-align:center;font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;padding:4px 0">Sa</div>
+  </div>
+  <!-- Calendar grid -->
+  <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;" id="cal-grid"></div>
+  <!-- Selected day appointments -->
+  <div id="cal-day-appts" style="margin-top:16px;"></div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -483,25 +513,6 @@ var currentFilter='all';
 var currentClientFilter='all';
 
 // ─── NAVIGATION ──────────────────────────────────────────
-var pages=['home','clients','appts','followup','revenue','alerts'];
-function showPage(id){
-  pages.forEach(function(p){
-    var pg=document.getElementById('page-'+p);
-    var tb=document.getElementById('tab-'+p);
-    if(pg)pg.classList.remove('active');
-    if(tb)tb.classList.remove('active');
-  });
-  var pg=document.getElementById('page-'+id);
-  var tb=document.getElementById('tab-'+id);
-  if(pg)pg.classList.add('active');
-  if(tb)tb.classList.add('active');
-  window.scrollTo(0,0);
-  if(id==='home')renderHome();
-  if(id==='clients')renderClients();
-  if(id==='appts')renderAllAppts();
-  if(id==='revenue')renderRevenue();
-  if(id==='followup')renderFollowUp();
-}
 
 // ─── SHEETS ──────────────────────────────────────────────
 function openSheet(id){
@@ -671,7 +682,8 @@ function renderAllAppts(){
 
 // ─── APPOINTMENT DETAIL ───────────────────────────────────
 function openApptDetail(id){
-  var a=appointments.find(function(x){return x.id===id;});
+  id=String(id);
+  var a=appointments.find(function(x){return String(x.id)===id;});
   if(!a)return;
   document.getElementById('detail-title').textContent=a.client_name+' — '+formatDate(a.appointment_date);
   var body='<div class="card" style="margin-bottom:12px">'
@@ -695,8 +707,9 @@ function openApptDetail(id){
 }
 
 async function markAppt(id,status){
+  id=String(id);
   await sbUpdate('appointments',id,{status:status});
-  var a=appointments.find(function(x){return x.id===id;});
+  var a=appointments.find(function(x){return String(x.id)===id;});
   if(a){
     a.status=status;
     // Update client stats if done
@@ -899,6 +912,126 @@ function renderFollowUp(){
       +'</div>';
   }).join('');
 }
+
+
+// ─── CALENDAR ──────────────────────────────────────────────
+var calYear=new Date().getFullYear();
+var calMonth=new Date().getMonth();
+var calSelectedDate=new Date().toISOString().split('T')[0];
+
+function showPage(id){
+  var allPages=['home','clients','appts','followup','revenue','alerts','calendar'];
+  allPages.forEach(function(p){
+    var pg=document.getElementById('page-'+p);
+    var tb=document.getElementById('tab-'+p);
+    if(pg)pg.classList.remove('active');
+    if(tb)tb.classList.remove('active');
+  });
+  var pg=document.getElementById('page-'+id);
+  var tb=document.getElementById('tab-'+id);
+  if(pg)pg.classList.add('active');
+  if(tb)tb.classList.add('active');
+  window.scrollTo(0,0);
+  if(id==='home')renderHome();
+  if(id==='clients')renderClients();
+  if(id==='appts')renderAllAppts();
+  if(id==='revenue')renderRevenue();
+  if(id==='followup')renderFollowUp();
+  if(id==='calendar')renderCal();
+}
+
+function renderCal(){
+  var months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('cal-month-label').textContent=months[calMonth]+' '+calYear;
+  var today=new Date().toISOString().split('T')[0];
+  var firstDay=new Date(calYear,calMonth,1).getDay();
+  var daysInMonth=new Date(calYear,calMonth+1,0).getDate();
+  var daysInPrev=new Date(calYear,calMonth,0).getDate();
+  var html='';
+  var totalCells=Math.ceil((firstDay+daysInMonth)/7)*7;
+  for(var i=0;i<totalCells;i++){
+    var dayNum,month=calMonth,year=calYear,other=false;
+    if(i<firstDay){dayNum=daysInPrev-(firstDay-i-1);month=calMonth-1;if(month<0){month=11;year=calYear-1;}other=true;}
+    else if(i>=firstDay+daysInMonth){dayNum=i-firstDay-daysInMonth+1;month=calMonth+1;if(month>11){month=0;year=calYear+1;}other=true;}
+    else{dayNum=i-firstDay+1;}
+    var ds=year+'-'+String(month+1).padStart(2,'0')+'-'+String(dayNum).padStart(2,'0');
+    var dayAppts=appointments.filter(function(a){return a.appointment_date===ds;});
+    var isToday=ds===today;
+    var isSel=ds===calSelectedDate;
+    var bg=isSel?'background:var(--gold);color:var(--bg);':isToday?'background:rgba(245,200,66,0.15);':'background:var(--s1);';
+    var textColor=isSel?'color:var(--bg)':'';
+    html+='<div data-date="'+ds+'" onclick="calSelectDay(this.dataset.date)" style="'+bg+'border:1px solid var(--border);border-radius:8px;min-height:52px;padding:5px 4px;cursor:pointer;transition:all .2s;'+(other?'opacity:.3':'')+';">';
+    html+='<div style="font-size:11px;font-weight:700;margin-bottom:3px;'+textColor+'">'+dayNum+'</div>';
+    dayAppts.slice(0,2).forEach(function(a){
+      html+='<div style="background:'+(isSel?'rgba(0,0,0,0.2)':'var(--gold-dim)')+';border-radius:3px;padding:2px 4px;font-size:8px;font-weight:600;color:'+(isSel?'var(--bg)':'var(--gold)')+';margin-bottom:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">'+a.client_name+'</div>';
+    });
+    if(dayAppts.length>2)html+='<div style="font-size:8px;color:var(--muted)">+'+( dayAppts.length-2)+' more</div>';
+    html+='</div>';
+  }
+  document.getElementById('cal-grid').innerHTML=html;
+  renderCalDayAppts(calSelectedDate);
+}
+
+function calSelectDay(ds){
+  calSelectedDate=ds;
+  renderCal();
+}
+
+function renderCalDayAppts(ds){
+  var dayAppts=appointments.filter(function(a){return a.appointment_date===ds;});
+  dayAppts.sort(function(a,b){return(a.appointment_time||'').localeCompare(b.appointment_time||'');});
+  var el=document.getElementById('cal-day-appts');
+  var dateLabel=formatDate(ds);
+  var html='<div style="font-family:var(--fd);font-size:18px;letter-spacing:.5px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;">'
+    +dateLabel
+    +'<div class="sec-btn" onclick="openSheet(&quot;add-appt-sheet&quot;)">+ Add</div>'
+    +'</div>';
+  if(!dayAppts.length){
+    html+='<div style="text-align:center;padding:20px;color:var(--muted);font-size:13px;">No appointments this day</div>';
+  } else {
+    html+=dayAppts.map(function(a){return apptCard(a);}).join('');
+  }
+  // Follow-up texts due today
+  var today=new Date().toISOString().split('T')[0];
+  if(ds===today){
+    var noShows=appointments.filter(function(a){
+      var d=new Date(a.appointment_date+'T00:00:00');
+      var now=new Date();now.setHours(0,0,0,0);
+      return a.status==='noshow'&&d<=now;
+    });
+    var reminders=appointments.filter(function(a){
+      var tomorrow=new Date();tomorrow.setDate(tomorrow.getDate()+1);
+      return a.status==='upcoming'&&a.appointment_date===tomorrow.toISOString().split('T')[0];
+    });
+    if(reminders.length){
+      html+='<div style="margin-top:14px;"><div style="font-family:var(--fd);font-size:16px;letter-spacing:.5px;margin-bottom:8px;color:var(--gold)">⏰ Reminders to Send Today</div>';
+      html+=reminders.map(function(a){
+        var msg=encodeURIComponent('Hey '+a.client_name.split(' ')[0]+'! Reminder: appointment with Bryan tomorrow at '+a.appointment_time+'. See you then! Reply STOP to opt out.');
+        return'<div style="background:var(--s2);border-radius:8px;padding:12px;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;">'
+          +'<div><div style="font-size:13px;font-weight:700">'+a.client_name+'</div><div style="font-size:11px;color:var(--muted)">Tomorrow at '+a.appointment_time+'</div></div>'
+          +'<a href="sms:'+(a.phone||'').replace(/\D/g,'')+'&body='+msg+'"><button class="fu-btn text">Send ✓</button></a>'
+          +'</div>';
+      }).join('');
+      html+='</div>';
+    }
+    if(noShows.length){
+      html+='<div style="margin-top:14px;"><div style="font-family:var(--fd);font-size:16px;letter-spacing:.5px;margin-bottom:8px;color:var(--red)">😬 No-Show Follow-Ups</div>';
+      html+=noShows.map(function(a){
+        var msg=encodeURIComponent('Hey '+a.client_name.split(' ')[0]+'! Its Bryan from Urban Cutz. Sorry we missed you - want to rebook? Get you in ASAP!');
+        return'<div style="background:var(--s2);border-radius:8px;padding:12px;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;">'
+          +'<div><div style="font-size:13px;font-weight:700">'+a.client_name+'</div><div style="font-size:11px;color:var(--muted)">Missed on '+formatDate(a.appointment_date)+'</div></div>'
+          +'<a href="sms:'+(a.phone||'').replace(/\D/g,'')+'&body='+msg+'"><button class="fu-btn text">Text</button></a>'
+          +'</div>';
+      }).join('');
+      html+='</div>';
+    }
+  }
+  el.innerHTML=html;
+}
+
+function calPrev(){if(calMonth===0){calMonth=11;calYear--;}else{calMonth--;}renderCal();}
+function calNext(){if(calMonth===11){calMonth=0;calYear++;}else{calMonth++;}renderCal();}
+function calToday(){calYear=new Date().getFullYear();calMonth=new Date().getMonth();calSelectedDate=new Date().toISOString().split('T')[0];renderCal();}
 
 // ─── INIT ─────────────────────────────────────────────────
 // Set today's date display
