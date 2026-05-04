@@ -706,29 +706,50 @@ function openApptDetail(id){
   openSheet('appt-detail-sheet');
 }
 
+
+// SMS disabled — using manual text buttons only
+async function twilioSend(){ return false; }
+
 async function markAppt(id,status){
   id=String(id);
   await sbUpdate('appointments',id,{status:status});
   var a=appointments.find(function(x){return String(x.id)===id;});
   if(a){
     a.status=status;
-    // Update client stats if done
-    if(status==='done'&&a.client_name){
-      var cl=clients.find(function(c){return c.name===a.client_name;});
-      if(cl){
-        await sbUpdate('clients',cl.id,{
-          total_visits:(cl.total_visits||0)+1,
-          total_spent:(cl.total_spent||0)+(a.price||0),
-          last_visit:a.appointment_date
-        });
-        cl.total_visits=(cl.total_visits||0)+1;
-        cl.total_spent=(cl.total_spent||0)+(a.price||0);
-        cl.last_visit=a.appointment_date;
+
+    // ── DONE: update stats + send review request ──
+    if(status==='done'){
+      // Update client stats
+      if(a.client_name){
+        var cl=clients.find(function(c){return c.name===a.client_name;});
+        if(cl){
+          await sbUpdate('clients',cl.id,{
+            total_visits:(cl.total_visits||0)+1,
+            total_spent:(cl.total_spent||0)+(a.price||0),
+            last_visit:a.appointment_date
+          });
+          cl.total_visits=(cl.total_visits||0)+1;
+          cl.total_spent=(cl.total_spent||0)+(a.price||0);
+          cl.last_visit=a.appointment_date;
+        }
       }
+      // Send review request text
+      var firstName=(a.client_name||'').split(' ')[0]||'there';
+      toast('✅ Done! Great cut for '+firstName+'!');
+    }
+
+    // ── NO SHOW: send rebook text ──
+    else if(status==='noshow'){
+      var firstName=(a.client_name||'').split(' ')[0]||'there';
+      toast('😬 No-show logged for '+firstName);
+    }
+
+    // ── CANCELLED ──
+    else if(status==='cancelled'){
+      toast('Appointment cancelled');
     }
   }
   closeSheet('appt-detail-sheet');
-  toast(status==='done'?'✅ Marked as done! Revenue updated':'Marked as '+status);
   renderHome();renderRevenue();renderClients();renderAllAppts();
 }
 
@@ -805,7 +826,7 @@ function openClientDetail(id){
     +'<a href="tel:'+(c.phone||'').replace(/\D/g,'')+'" style="display:block"><button class="btn-gold" style="margin:0;font-size:14px">📞 Call</button></a>'
     +'<a href="sms:'+(c.phone||'').replace(/\D/g,'')+'" style="display:block"><button class="btn-outline" style="margin:0">💬 Text</button></a>'
     +'</div>'
-    +(c.notes?'<div class="card" style="margin-bottom:12px"><div class="card-body" style="font-size:13px;color:var(--muted)">📝 '+c.notes+'</div></div>':'')
+    +'<div class="card" style="margin-bottom:12px">'    +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">'    +'<div style="font-size:13px;font-weight:700">📝 Notes</div>'    +'<button onclick="saveClientNotes(\''+c.id+'\')" style="background:var(--gold);color:#000;border:none;border-radius:6px;padding:5px 12px;font-size:11px;font-weight:700;cursor:pointer">Save</button>'    +'</div>'    +'<textarea id="client-notes-field" placeholder="e.g. always gets taper fade, sensitive scalp, prefers 3pm..." style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:10px;color:var(--text);font-size:13px;font-family:var(--font);resize:vertical;min-height:80px;outline:none">'+( c.notes||'')+'</textarea>'    +'</div>'
     +'<div class="sec-title" style="font-size:18px">Visit History</div>'
     +(appts.length?appts.map(function(a){return'<div class="appt-card '+(a.status||'upcoming')+'">'
       +'<div class="appt-time-col"><div class="appt-time" style="font-size:13px">'+formatDate(a.appointment_date)+'</div></div>'
@@ -814,6 +835,23 @@ function openClientDetail(id){
       +'</div>';}).join(''):'<div class="empty"><div class="empty-ic">✂️</div><div class="empty-t">No visits yet</div></div>')
     +'</div>';
 }
+function saveClientNotes(id){
+  var notes = document.getElementById('client-notes-field').value.trim();
+  var cl = clients.find(function(x){return x.id===id;});
+  if(!cl) return;
+  // Save to Supabase
+  fetch(SUPA_URL+'/rest/v1/clients?id=eq.'+id,{
+    method:'PATCH',
+    headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json'},
+    body:JSON.stringify({notes:notes})
+  }).then(function(){
+    cl.notes = notes;
+    toast('✅ Notes saved!');
+  }).catch(function(){
+    toast('❌ Could not save notes');
+  });
+}
+
 function backToClients(){
   var page=document.getElementById('page-clients');
   page.innerHTML='<div class="sec-title">Clients <span id="client-count" style="font-size:14px;color:var(--muted);font-family:var(--font)"></span><div class="sec-btn" onclick="openSheet(\'add-client-sheet\')">+ New</div></div><div class="search-bar"><span>🔍</span><input id="client-search" placeholder="Search clients..." oninput="renderClients()"></div><div class="pill-tabs"><div class="pill active" onclick="filterClients(\'all\',this)">All</div><div class="pill" onclick="filterClients(\'vip\',this)">VIP 👑</div><div class="pill" onclick="filterClients(\'returning\',this)">Returning</div><div class="pill" onclick="filterClients(\'new\',this)">New</div><div class="pill" onclick="filterClients(\'inactive\',this)">Inactive</div></div><div class="card" id="client-list-wrap"><div id="client-list"></div></div>';
