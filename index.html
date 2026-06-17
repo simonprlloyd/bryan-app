@@ -173,6 +173,14 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:var(--
 .pill{padding:7px 16px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;transition:all .2s;border:1px solid var(--border);color:var(--muted);background:transparent;}
 .pill.active{background:var(--gold-dim);color:var(--gold);border-color:var(--gold-border);}
 
+/* SEGMENTED SUB-NAV (merged-tab sections) */
+.seg-nav{display:flex;gap:4px;background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:4px;margin-bottom:16px;}
+.seg{flex:1;text-align:center;padding:9px 6px;border-radius:10px;font-size:12px;font-weight:700;letter-spacing:.3px;color:var(--muted);cursor:pointer;transition:all .2s;-webkit-tap-highlight-color:transparent;}
+.seg.active{background:var(--gold);color:#111;}
+.subsec{display:none;}
+.subsec.active{display:block;animation:fadeUp .22s ease both;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
 /* FOLLOW-UP AUTOMATION TOGGLE */
 .auto-card{background:var(--s2);border-radius:var(--r);padding:14px 16px;display:flex;align-items:center;gap:12px;margin-bottom:8px;border:1px solid var(--border);}
 .auto-ic{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
@@ -212,6 +220,14 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:var(--
 
 <!-- HOME PAGE -->
 <div class="page active" id="page-home">
+  <div class="seg-nav">
+    <div class="seg active" id="seg-overview" onclick="dashSeg('overview')">Overview</div>
+    <div class="seg" id="seg-revenue" onclick="dashSeg('revenue')">Revenue</div>
+    <div class="seg" id="seg-followup" onclick="dashSeg('followup')">Follow-Up</div>
+  </div>
+
+  <div class="subsec active" id="sub-overview">
+
   <!-- Quick stats -->
   <div class="stats-row">
     <div class="stat-card gold">
@@ -240,8 +256,8 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:var(--
   <div class="qa-strip">
     <div class="qa-btn" onclick="openSheet('add-appt-sheet')"><div class="qa-ic">➕</div><div class="qa-lbl">Add Appt</div></div>
     <div class="qa-btn" onclick="openSheet('add-client-sheet')"><div class="qa-ic">👤</div><div class="qa-lbl">Add Client</div></div>
-    <div class="qa-btn" onclick="showPage('followup')"><div class="qa-ic">📱</div><div class="qa-lbl">Follow Up</div></div>
-    <div class="qa-btn" onclick="showPage('revenue')"><div class="qa-ic">💰</div><div class="qa-lbl">Revenue</div></div>
+    <div class="qa-btn" onclick="dashSeg('followup')"><div class="qa-ic">📱</div><div class="qa-lbl">Follow Up</div></div>
+    <div class="qa-btn" onclick="dashSeg('revenue')"><div class="qa-ic">💰</div><div class="qa-lbl">Revenue</div></div>
   </div>
 
   <!-- Today's appointments -->
@@ -254,81 +270,11 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:var(--
   <!-- Upcoming -->
   <div class="sec-title" style="margin-top:8px">Upcoming</div>
   <div id="upcoming-appts"></div>
-</div>
 
-<!-- CLIENTS PAGE -->
-<div class="page" id="page-clients">
-  <div class="sec-title">Clients <span id="client-count" style="font-size:14px;color:var(--muted);font-family:var(--font)"></span>
-    <div class="sec-btn" onclick="openSheet('add-client-sheet')">+ New</div>
-  </div>
-  <div class="search-bar">
-    <span>🔍</span>
-    <input id="client-search" placeholder="Search clients..." oninput="renderClients()">
-  </div>
-  <div class="pill-tabs">
-    <div class="pill active" onclick="filterClients('all',this)">All</div>
-    <div class="pill" onclick="filterClients('vip',this)">VIP 👑</div>
-    <div class="pill" onclick="filterClients('returning',this)">Returning</div>
-    <div class="pill" onclick="filterClients('new',this)">New</div>
-    <div class="pill" onclick="filterClients('inactive',this)">Inactive</div>
-  </div>
-  <div class="card" id="client-list-wrap"><div id="client-list"></div></div>
-</div>
-
-<!-- APPOINTMENTS PAGE -->
-<div class="page" id="page-appts">
-  <div class="sec-title">Appointments
-    <div class="sec-btn" onclick="openSheet('add-appt-sheet')">+ Add</div>
-  </div>
-  <div class="pill-tabs">
-    <div class="pill active" onclick="filterAppts('all',this)">All</div>
-    <div class="pill" onclick="filterAppts('upcoming',this)">Upcoming</div>
-    <div class="pill" onclick="filterAppts('done',this)">Done</div>
-    <div class="pill" onclick="filterAppts('noshow',this)">No-Show</div>
-    <div class="pill" onclick="filterAppts('cancelled',this)">Cancelled</div>
-  </div>
-  <div id="all-appts"></div>
-</div>
-
-<!-- FOLLOW-UP PAGE -->
-<div class="page" id="page-followup">
-  <div class="sec-title">Follow-Up</div>
-  
-  <!-- Automations -->
-  <div class="card" style="margin-bottom:14px">
-    <div class="card-hd"><div><div class="card-title">Automations</div><div class="card-sub">Runs automatically for every client</div></div></div>
-    <div class="card-body" style="padding:0">
-      <div class="auto-card">
-        <div class="auto-ic" style="background:var(--gold-dim)">⏰</div>
-        <div class="auto-info"><div class="auto-title">24hr Appointment Reminder</div><div class="auto-sub">Texts client 24hrs before their cut</div></div>
-        <div class="toggle on" id="tog-reminder" onclick="toggleAuto(this)"></div>
-      </div>
-      <div class="auto-card">
-        <div class="auto-ic" style="background:var(--green-dim)">⭐</div>
-        <div class="auto-info"><div class="auto-title">Review Request</div><div class="auto-sub">Texts 1hr after appointment — asks for Google review</div></div>
-        <div class="toggle on" id="tog-review" onclick="toggleAuto(this)"></div>
-      </div>
-      <div class="auto-card">
-        <div class="auto-ic" style="background:var(--blue-dim)">🔁</div>
-        <div class="auto-info"><div class="auto-title">Rebooking Nudge</div><div class="auto-sub">Texts "Time for a fresh cut?" 3 weeks after last visit</div></div>
-        <div class="toggle on" id="tog-rebook" onclick="toggleAuto(this)"></div>
-      </div>
-      <div class="auto-card">
-        <div class="auto-ic" style="background:var(--red-dim)">😬</div>
-        <div class="auto-info"><div class="auto-title">Win-Back (Inactive)</div><div class="auto-sub">Texts clients who haven't booked in 45+ days</div></div>
-        <div class="toggle" id="tog-winback" onclick="toggleAuto(this)"></div>
-      </div>
-    </div>
   </div>
 
-  <!-- Manual follow-ups needed -->
-  <div class="sec-title" style="font-size:18px">Needs Follow-Up</div>
-  <div class="card"><div id="fu-list"></div></div>
-</div>
+  <div class="subsec" id="sub-revenue">
 
-<!-- REVENUE PAGE -->
-<div class="page" id="page-revenue">
-  <div class="sec-title">Revenue</div>
   
   <div class="stats-row">
     <div class="stat-card gold">
@@ -368,7 +314,121 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:var(--
   <!-- Recent transactions -->
   <div class="sec-title" style="margin-top:8px;font-size:18px">Recent Transactions</div>
   <div id="recent-txns"></div>
+
+  </div>
+
+  <div class="subsec" id="sub-followup">
+
+  
+  <!-- Automations -->
+  <div class="card" style="margin-bottom:14px">
+    <div class="card-hd"><div><div class="card-title">Automations</div><div class="card-sub">Runs automatically for every client</div></div></div>
+    <div class="card-body" style="padding:0">
+      <div class="auto-card">
+        <div class="auto-ic" style="background:var(--gold-dim)">⏰</div>
+        <div class="auto-info"><div class="auto-title">24hr Appointment Reminder</div><div class="auto-sub">Texts client 24hrs before their cut</div></div>
+        <div class="toggle on" id="tog-reminder" onclick="toggleAuto(this)"></div>
+      </div>
+      <div class="auto-card">
+        <div class="auto-ic" style="background:var(--green-dim)">⭐</div>
+        <div class="auto-info"><div class="auto-title">Review Request</div><div class="auto-sub">Texts 1hr after appointment — asks for Google review</div></div>
+        <div class="toggle on" id="tog-review" onclick="toggleAuto(this)"></div>
+      </div>
+      <div class="auto-card">
+        <div class="auto-ic" style="background:var(--blue-dim)">🔁</div>
+        <div class="auto-info"><div class="auto-title">Rebooking Nudge</div><div class="auto-sub">Texts "Time for a fresh cut?" 3 weeks after last visit</div></div>
+        <div class="toggle on" id="tog-rebook" onclick="toggleAuto(this)"></div>
+      </div>
+      <div class="auto-card">
+        <div class="auto-ic" style="background:var(--red-dim)">😬</div>
+        <div class="auto-info"><div class="auto-title">Win-Back (Inactive)</div><div class="auto-sub">Texts clients who haven't booked in 45+ days</div></div>
+        <div class="toggle" id="tog-winback" onclick="toggleAuto(this)"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Manual follow-ups needed -->
+  <div class="sec-title" style="font-size:18px">Needs Follow-Up</div>
+  <div class="card"><div id="fu-list"></div></div>
+
+  </div>
 </div>
+
+<!-- CLIENTS PAGE -->
+<div class="page" id="page-clients">
+  <div class="sec-title">Clients <span id="client-count" style="font-size:14px;color:var(--muted);font-family:var(--font)"></span>
+    <div class="sec-btn" onclick="openSheet('add-client-sheet')">+ New</div>
+  </div>
+  <div class="search-bar">
+    <span>🔍</span>
+    <input id="client-search" placeholder="Search clients..." oninput="renderClients()">
+  </div>
+  <div class="pill-tabs">
+    <div class="pill active" onclick="filterClients('all',this)">All</div>
+    <div class="pill" onclick="filterClients('vip',this)">VIP 👑</div>
+    <div class="pill" onclick="filterClients('returning',this)">Returning</div>
+    <div class="pill" onclick="filterClients('new',this)">New</div>
+    <div class="pill" onclick="filterClients('inactive',this)">Inactive</div>
+  </div>
+  <div class="card" id="client-list-wrap"><div id="client-list"></div></div>
+</div>
+
+<!-- APPOINTMENTS PAGE -->
+<div class="page" id="page-appts">
+  <div class="seg-nav">
+    <div class="seg active" id="seg-list" onclick="schedSeg('list')">List</div>
+    <div class="seg" id="seg-calendar" onclick="schedSeg('calendar')">Calendar</div>
+  </div>
+
+  <div class="subsec active" id="sub-list">
+
+  <div class="sec-title">Appointments
+    <div class="sec-btn" onclick="openSheet('add-appt-sheet')">+ Add</div>
+  </div>
+  <div class="pill-tabs">
+    <div class="pill active" onclick="filterAppts('all',this)">All</div>
+    <div class="pill" onclick="filterAppts('upcoming',this)">Upcoming</div>
+    <div class="pill" onclick="filterAppts('done',this)">Done</div>
+    <div class="pill" onclick="filterAppts('noshow',this)">No-Show</div>
+    <div class="pill" onclick="filterAppts('cancelled',this)">Cancelled</div>
+  </div>
+  <div id="all-appts"></div>
+
+  </div>
+
+  <div class="subsec" id="sub-calendar">
+
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <button onclick="calPrev()" style="width:34px;height:34px;background:var(--s1);border:1px solid var(--border);border-radius:50%;color:var(--white);font-size:16px;cursor:pointer;">‹</button>
+      <div style="font-family:var(--fd);font-size:22px;letter-spacing:.5px" id="cal-month-label">May 2026</div>
+      <button onclick="calNext()" style="width:34px;height:34px;background:var(--s1);border:1px solid var(--border);border-radius:50%;color:var(--white);font-size:16px;cursor:pointer;">›</button>
+    </div>
+    <button onclick="calToday()" style="padding:7px 14px;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:20px;color:var(--gold);font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font);">Today</button>
+  </div>
+  <!-- Day names -->
+  <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:4px;">
+    <div style="text-align:center;font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;padding:4px 0">Su</div>
+    <div style="text-align:center;font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;padding:4px 0">Mo</div>
+    <div style="text-align:center;font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;padding:4px 0">Tu</div>
+    <div style="text-align:center;font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;padding:4px 0">We</div>
+    <div style="text-align:center;font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;padding:4px 0">Th</div>
+    <div style="text-align:center;font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;padding:4px 0">Fr</div>
+    <div style="text-align:center;font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;padding:4px 0">Sa</div>
+  </div>
+  <!-- Calendar grid -->
+  <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;" id="cal-grid"></div>
+  <!-- Selected day appointments -->
+  <div id="cal-day-appts" style="margin-top:16px;"></div>
+
+  </div>
+</div>
+
+<!-- FOLLOW-UP PAGE -->
+
+
+<!-- REVENUE PAGE -->
+
 
 <!-- ALERTS PAGE -->
 <div class="page" id="page-alerts">
@@ -379,22 +439,13 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:var(--
 <!-- TAB BAR -->
 <div class="tab-bar">
   <div class="tab active" onclick="showPage('home')" id="tab-home">
-    <div class="tab-ic">🏠</div><div class="tab-lbl">Home</div>
+    <div class="tab-ic">🏠</div><div class="tab-lbl">Dashboard</div>
   </div>
   <div class="tab" onclick="showPage('appts')" id="tab-appts">
-    <div class="tab-ic">📅</div><div class="tab-lbl">Appointments</div>
+    <div class="tab-ic">📅</div><div class="tab-lbl">Schedule</div>
   </div>
   <div class="tab" onclick="showPage('clients')" id="tab-clients">
     <div class="tab-ic">👥</div><div class="tab-lbl">Clients</div>
-  </div>
-  <div class="tab" onclick="showPage('followup')" id="tab-followup">
-    <div class="tab-ic">📱</div><div class="tab-lbl">Follow-Up</div>
-  </div>
-  <div class="tab" onclick="showPage('revenue')" id="tab-revenue">
-    <div class="tab-ic">💰</div><div class="tab-lbl">Revenue</div>
-  </div>
-  <div class="tab" onclick="showPage('calendar')" id="tab-calendar">
-    <div class="tab-ic">📆</div><div class="tab-lbl">Calendar</div>
   </div>
 </div>
 
@@ -462,30 +513,7 @@ html,body{height:100%;background:var(--bg);color:var(--white);font-family:var(--
 
 
 <!-- CALENDAR PAGE -->
-<div class="page" id="page-calendar">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
-    <div style="display:flex;align-items:center;gap:10px;">
-      <button onclick="calPrev()" style="width:34px;height:34px;background:var(--s1);border:1px solid var(--border);border-radius:50%;color:var(--white);font-size:16px;cursor:pointer;">‹</button>
-      <div style="font-family:var(--fd);font-size:22px;letter-spacing:.5px" id="cal-month-label">May 2026</div>
-      <button onclick="calNext()" style="width:34px;height:34px;background:var(--s1);border:1px solid var(--border);border-radius:50%;color:var(--white);font-size:16px;cursor:pointer;">›</button>
-    </div>
-    <button onclick="calToday()" style="padding:7px 14px;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:20px;color:var(--gold);font-size:12px;font-weight:600;cursor:pointer;font-family:var(--font);">Today</button>
-  </div>
-  <!-- Day names -->
-  <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:4px;">
-    <div style="text-align:center;font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;padding:4px 0">Su</div>
-    <div style="text-align:center;font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;padding:4px 0">Mo</div>
-    <div style="text-align:center;font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;padding:4px 0">Tu</div>
-    <div style="text-align:center;font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;padding:4px 0">We</div>
-    <div style="text-align:center;font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;padding:4px 0">Th</div>
-    <div style="text-align:center;font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;padding:4px 0">Fr</div>
-    <div style="text-align:center;font-size:9px;font-weight:700;color:var(--muted);text-transform:uppercase;padding:4px 0">Sa</div>
-  </div>
-  <!-- Calendar grid -->
-  <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;" id="cal-grid"></div>
-  <!-- Selected day appointments -->
-  <div id="cal-day-appts" style="margin-top:16px;"></div>
-</div>
+
 
 <div class="toast" id="toast"></div>
 
@@ -716,9 +744,89 @@ function openApptDetail(id){
     +'<button class="btn-outline" style="margin:0;font-size:14px;border-color:rgba(239,68,68,0.3);color:var(--red)" onclick="markAppt(\''+id+'\',\'noshow\')">No Show</button>'
     +'</div>';
   body+='<a href="tel:'+(a.phone||'').replace(/\D/g,'')+'" style="display:block"><button class="btn-outline" style="margin:0;margin-bottom:8px">📞 Call Client</button></a>';
-  body+='<a href="sms:'+(a.phone||'').replace(/\D/g,'')+'" style="display:block"><button class="btn-outline" style="margin:0">💬 Text Client</button></a>';
+  body+='<a href="sms:'+(a.phone||'').replace(/\D/g,'')+'" style="display:block"><button class="btn-outline" style="margin:0;margin-bottom:8px">💬 Text Client</button></a>';
+  // Edit + Delete
+  body+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px">'
+    +'<button class="btn-outline" style="margin:0;font-size:14px" onclick="editAppt(\''+id+'\')">✏️ Edit</button>'
+    +'<button class="btn-outline" style="margin:0;font-size:14px;border-color:rgba(239,68,68,0.4);color:var(--red)" onclick="deleteApptConfirm(\''+id+'\')">🗑️ Delete</button>'
+    +'</div>';
   document.getElementById('appt-detail-body').innerHTML=body;
   openSheet('appt-detail-sheet');
+}
+
+// ─── EDIT APPOINTMENT ─────────────────────────────────────
+var SVC_PRICES={'Regular Cut':30,'Haircut + Beard':35,'Glow Up':40,'Fade':35,'The Fresh Reset':30,'Fade & Beard':40};
+var TIME_OPTS=['9:00 AM','9:30 AM','10:00 AM','10:30 AM','11:00 AM','11:30 AM','12:00 PM','12:30 PM','1:00 PM','1:30 PM','2:00 PM','2:30 PM','3:00 PM','3:30 PM','4:00 PM','4:30 PM','5:00 PM','5:30 PM','6:00 PM','6:30 PM','7:00 PM','7:30 PM'];
+function editAppt(id){
+  id=String(id);
+  var a=appointments.find(function(x){return String(x.id)===id;});
+  if(!a)return;
+  document.getElementById('detail-title').textContent='Edit — '+(a.client_name||'');
+  var svcOpts=Object.keys(SVC_PRICES).filter(function(v,i,arr){return arr.indexOf(v)===i;});
+  var statuses=[['upcoming','Upcoming'],['done','Done'],['noshow','No-Show'],['cancelled','Cancelled']];
+  var body='<label class="flbl">Client Name</label><input class="fin" id="e-name" value="'+(a.client_name||'').replace(/"/g,'&quot;')+'">'
+    +'<label class="flbl">Phone</label><input class="fin" id="e-phone" type="tel" value="'+(a.phone||'').replace(/"/g,'&quot;')+'">'
+    +'<label class="flbl">Service</label><select class="fsel" id="e-svc">'
+    +svcOpts.map(function(s){return'<option value="'+s+'"'+(a.service===s?' selected':'')+'>'+s+' — $'+SVC_PRICES[s]+'</option>';}).join('')
+    +'</select>'
+    +'<div class="fgrid"><div><label class="flbl">Date</label><input class="fin" id="e-date" type="date" value="'+(a.appointment_date||'')+'"></div>'
+    +'<div><label class="flbl">Time</label><select class="fsel" id="e-time">'
+    +TIME_OPTS.map(function(t){return'<option'+(a.appointment_time===t?' selected':'')+'>'+t+'</option>';}).join('')
+    +'</select></div></div>'
+    +'<label class="flbl">Status</label><select class="fsel" id="e-status">'
+    +statuses.map(function(s){return'<option value="'+s[0]+'"'+((a.status||'upcoming')===s[0]?' selected':'')+'>'+s[1]+'</option>';}).join('')
+    +'</select>'
+    +'<label class="flbl">Notes</label><input class="fin" id="e-notes" value="'+(a.notes||'').replace(/"/g,'&quot;')+'">'
+    +'<button class="btn-gold" onclick="saveApptEdit(\''+id+'\')">💾 Save Changes</button>'
+    +'<button class="btn-outline" onclick="openApptDetail(\''+id+'\')">Cancel</button>';
+  document.getElementById('appt-detail-body').innerHTML=body;
+}
+async function saveApptEdit(id){
+  id=String(id);
+  var a=appointments.find(function(x){return String(x.id)===id;});
+  if(!a)return;
+  var svc=document.getElementById('e-svc').value;
+  var updated={
+    client_name:document.getElementById('e-name').value.trim(),
+    phone:document.getElementById('e-phone').value.trim(),
+    service:svc,
+    price:SVC_PRICES[svc]||a.price,
+    appointment_date:document.getElementById('e-date').value,
+    appointment_time:document.getElementById('e-time').value,
+    status:document.getElementById('e-status').value,
+    notes:document.getElementById('e-notes').value.trim()
+  };
+  try{
+    await sbUpdate('appointments',id,updated);
+    Object.keys(updated).forEach(function(k){a[k]=updated[k];});
+    toast('✅ Appointment updated');
+  }catch(e){
+    Object.keys(updated).forEach(function(k){a[k]=updated[k];});
+    toast('Saved locally — check connection');
+  }
+  closeSheet('appt-detail-sheet');
+  renderHome();renderRevenue();renderClients();renderAllAppts();renderCal();
+}
+function deleteApptConfirm(id){
+  id=String(id);
+  var a=appointments.find(function(x){return String(x.id)===id;});
+  if(!a)return;
+  document.getElementById('detail-title').textContent='Delete appointment?';
+  var body='<div class="card" style="margin-bottom:12px"><div class="card-body">'
+    +'<div style="font-size:14px;line-height:1.6;color:var(--white)">This permanently removes <b>'+(a.client_name||'this')+'</b>\'s '+(a.service||'appointment')+' on '+formatDate(a.appointment_date)+' at '+(a.appointment_time||'—')+'.</div>'
+    +'<div style="font-size:12px;color:var(--muted);margin-top:8px">This can\'t be undone.</div>'
+    +'</div></div>'
+    +'<button class="btn-gold" style="background:var(--red);color:#fff" onclick="deleteAppt(\''+id+'\')">🗑️ Yes, Delete</button>'
+    +'<button class="btn-outline" onclick="openApptDetail(\''+id+'\')">Keep It</button>';
+  document.getElementById('appt-detail-body').innerHTML=body;
+}
+async function deleteAppt(id){
+  id=String(id);
+  try{ await sbDelete('appointments',id); }catch(e){}
+  appointments=appointments.filter(function(x){return String(x.id)!==id;});
+  closeSheet('appt-detail-sheet');
+  toast('🗑️ Appointment deleted');
+  renderHome();renderRevenue();renderClients();renderAllAppts();renderCal();
 }
 
 
@@ -973,7 +1081,7 @@ var calMonth=new Date().getMonth();
 var calSelectedDate=new Date().toISOString().split('T')[0];
 
 function showPage(id){
-  var allPages=['home','clients','appts','followup','revenue','alerts','calendar'];
+  var allPages=['home','clients','appts','alerts'];
   allPages.forEach(function(p){
     var pg=document.getElementById('page-'+p);
     var tb=document.getElementById('tab-'+p);
@@ -985,13 +1093,40 @@ function showPage(id){
   if(pg)pg.classList.add('active');
   if(tb)tb.classList.add('active');
   window.scrollTo(0,0);
-  if(id==='home')renderHome();
+  if(id==='home'){renderHome();renderRevenue();renderFollowUp();}
   if(id==='clients')renderClients();
-  if(id==='appts')renderAllAppts();
-  if(id==='revenue')renderRevenue();
-  if(id==='followup')renderFollowUp();
-  if(id==='calendar')renderCal();
+  if(id==='appts'){renderAllAppts();renderCal();}
 }
+
+// Dashboard tab sub-sections: overview / revenue / followup
+function dashSeg(which){
+  showPage('home');
+  ['overview','revenue','followup'].forEach(function(k){
+    var seg=document.getElementById('seg-'+k);
+    var sub=document.getElementById('sub-'+k);
+    if(seg)seg.classList.toggle('active',k===which);
+    if(sub)sub.classList.toggle('active',k===which);
+  });
+  if(which==='overview')renderHome();
+  if(which==='revenue')renderRevenue();
+  if(which==='followup')renderFollowUp();
+  window.scrollTo(0,0);
+}
+
+// Schedule tab sub-sections: list / calendar
+function schedSeg(which){
+  showPage('appts');
+  ['list','calendar'].forEach(function(k){
+    var seg=document.getElementById('seg-'+k);
+    var sub=document.getElementById('sub-'+k);
+    if(seg)seg.classList.toggle('active',k===which);
+    if(sub)sub.classList.toggle('active',k===which);
+  });
+  if(which==='list')renderAllAppts();
+  if(which==='calendar')renderCal();
+  window.scrollTo(0,0);
+}
+
 
 function renderCal(){
   var months=['January','February','March','April','May','June','July','August','September','October','November','December'];
